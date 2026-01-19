@@ -59,6 +59,7 @@ class UserController extends Controller
      */
     public function UpdateUserProfile(Request $request, SupabaseStorageService $storage)
     {
+
         $request->validate([
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
@@ -73,7 +74,7 @@ class UserController extends Controller
             $imageUrl = $storage->upload(
                 $request->file('profile_image'),
                 'users',
-                'avatars'
+                'images/users'
             );
 
             // update user

@@ -15,17 +15,18 @@ class SupabaseStorageService
     ): string {
         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $path = trim($folder, '/') . '/' . $fileName;
+        
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . config('services.supabase.service_key'),
             'apikey' => config('services.supabase.service_key'),
-        ])->attach(
-            'file',
-            file_get_contents($file->getRealPath()),
-            $fileName
+            'Content-Type' => $file->getMimeType(),
+        ])->withBody(
+            fopen($file->getRealPath(), 'r'),
+            $file->getMimeType()
         )->post(
             config('services.supabase.url')
-                . "/storage/v1/object/$bucket/$path"
+            . "/storage/v1/object/$bucket/$path"
         );
 
         if (!$response->successful()) {
@@ -46,7 +47,7 @@ class SupabaseStorageService
             'apikey' => config('services.supabase.service_key'),
         ])->delete(
             config('services.supabase.url')
-                . "/storage/v1/object/$objectPath"
+            . "/storage/v1/object/$objectPath"
         );
     }
 }
