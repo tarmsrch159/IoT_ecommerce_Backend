@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Support\Facades\File;
+use App\Services\SupabaseStorageService;
 
 class ProductController extends Controller
 {
@@ -40,12 +41,17 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AddProductRequest $request)
+    public function store(AddProductRequest $request,  SupabaseStorageService $storage)
     {
         //
         if ($request->validated()) {
             $data = $request->validated();
-            $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
+            // $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
+            $data['thumbnail'] = $storage->upload(
+                $request->file('thumbnail'),
+                'products',
+                'images/products'
+            );
 
 
             $data['sku'] = $this->generateSku(
@@ -83,16 +89,22 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product, SupabaseStorageService $storage)
     {
         //
         if ($request->validated()) {
             $data = $request->validated();
             if ($request->has('thumbnail')) {
                 //remove the old thumbnail
-                $this->removeProductImageFromStorage($product->thumbnail);
+                // $this->removeProductImageFromStorage($product->thumbnail);
+                $storage->delete($product->thumbnail);
                 //store the new thumbnail
-                $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
+                $data['thumbnail'] = $storage->upload(
+                    $request->file('thumbnail'),
+                    'products',
+                    'images/products'
+                );
+                // $data['thumbnail'] = $this->saveImage($request->file('thumbnail'));
             }
 
             $data['slug'] = Str::slug($request->name);
@@ -111,10 +123,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product, SupabaseStorageService $storage)
     {
         //
-        $this->removeProductImageFromStorage($product->thumbnail);
+        // $this->removeProductImageFromStorage($product->thumbnail);
+        $storage->delete($product->thumbnail);
         $product->delete();
         return redirect()->route('admin.products.index')->with([
             'success' => 'ลบสินค้าสำเร็จ'
@@ -142,7 +155,7 @@ class ProductController extends Controller
         }
     }
 
-    private function generateSku(int $categoryId, ): string
+    private function generateSku(int $categoryId,): string
     {
         $categoryCode = strtoupper(
             substr(
@@ -152,7 +165,7 @@ class ProductController extends Controller
             )
         );
 
-       
+
 
         // กันกรณีชื่อสั้น
         $categoryCode = str_pad($categoryCode, 3, 'X');

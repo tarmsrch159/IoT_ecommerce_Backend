@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Services\SupabaseStorageService;
 
 class UserController extends Controller
 {
@@ -19,12 +20,16 @@ class UserController extends Controller
         return UserResource::make($request->user());
     }
 
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, SupabaseStorageService $storage)
     {
         //
         $validated = $request->validated();
         if ($request->hasFile('profile_image')) {
-            $validated['profile_image'] = $this->saveImage($request->file('profile_image'));
+            $validated['profile_image'] = $storage->upload(
+                $request->file('profile_image'),
+                'users',
+                'images/users'
+            );
         }
         User::create($validated);
         return response()->json(['message' => 'สมัครสมาชิกสำเร็จ'], 201);
