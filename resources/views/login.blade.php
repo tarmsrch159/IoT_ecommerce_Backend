@@ -26,6 +26,7 @@
                 <h1 class="text-2xl font-semibold text-slate-800">
                     Admin Login
                 </h1>
+                
                 <p class="text-sm text-slate-500 mt-1">
                     Sign in to your dashboard
                 </p>
