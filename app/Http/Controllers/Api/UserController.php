@@ -57,7 +57,7 @@ class UserController extends Controller
     /***
      * Update user infos
      */
-    public function UpdateUserProfile(Request $request)
+    public function UpdateUserProfile(Request $request, SupabaseStorageService $storage)
     {
         $request->validate([
             'profile_image' => 'image|mimes:png,jpg,jpeg,webp|max:2048'
@@ -68,18 +68,18 @@ class UserController extends Controller
             if (File::exists(public_path($request->user()->profile_image))) {
                 File::delete(public_path($request->user()->profile_image));
             }
-            //store the user profile image 
-            $file = $request->file('profile_image');
-            $profile_image_name = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('images/users', $profile_image_name, 'public');
-            //update the user profile image
+
+            // upload รูปใหม่ไป Supabase
+            $imageUrl = $storage->upload(
+                $request->file('profile_image'),
+                'users',              // bucket name
+                'avatars'             // folder
+            );
+
+            // update user
             $request->user()->update([
-                'profile_image' => 'storage/images/users/' . $profile_image_name
-            ]);
-            //return the response
-            return response()->json([
-                'user' => UserResource::make($request->user()),
-                'message' => 'Profile image has been updated successfully'
+                'profile_image' => $imageUrl,
+                'profile_completed' => 1,
             ]);
         } else {
             $request->user()->update([
