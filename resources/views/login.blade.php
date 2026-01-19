@@ -55,8 +55,8 @@
                         Password
                     </label>
                     <input
-                    
-                        @keydown.space.prevent
+
+                        onkeydown="return event.key !== ' '"
                         type="password"
                         name="password"
                         class="w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
