@@ -19,6 +19,15 @@ Route::get('/locations/districts/{provinceId}', [LocationController::class, 'get
 
 Route::get('/locations/subdistricts/{districtId}', [LocationController::class, 'getSubdistricts']);
 
+Route::get('/_check', function () {
+    return [
+        'scheme' => request()->getScheme(),
+        'secure' => request()->isSecure(),
+        'session' => session()->getId(),
+        'csrf' => csrf_token(),
+    ];
+});
+
 
 Route::prefix("admin")->middleware("admin")->group(function () {
     Route::get('dashboard', [AdminController::class, "index"])->name("admin.index");

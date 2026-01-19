@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\HandleAppearance;
-use Illuminate\Http\Middleware\TrustProxies;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -28,7 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
-        $middleware->append(TrustProxies::class);
+        $middleware->append(
+            \App\Http\Middleware\TrustProxy::class
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
