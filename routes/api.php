@@ -13,7 +13,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserController::class, 'profile']);
     Route::post('/user/logout', [UserController::class, 'logout']);
 
-    Route::put('user/update/profile', [UserController::class, 'UpdateUserProfile']);
+    Route::post('user/update/profile', [UserController::class, 'UpdateUserProfile']);
 
     //Orders Route
     Route::post('store/order', [OrderController::class, 'storeUserOrders']);
