@@ -65,8 +65,8 @@ class UserController extends Controller
 
         if ($request->hasFile('profile_image')) {
             //check if the old image exists and remove it
-            if (File::exists(public_path($request->user()->profile_image))) {
-                File::delete(public_path($request->user()->profile_image));
+            if ($request->user()->profile_image) {
+                $storage->delete($request->user()->profile_image);
             }
 
             // upload รูปใหม่ไป Supabase
