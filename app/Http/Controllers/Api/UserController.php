@@ -92,12 +92,12 @@ class UserController extends Controller
                 'phone_number' => $request->phone_number,
                 'profile_completed' => 1
             ]);
-            //return the response
-            return response()->json([
-                'user' => UserResource::make($request->user()),
-                'message' => 'Profile updated successfully'
-            ]);
         }
+        //return the response
+        return response()->json([
+            'data' => UserResource::make($request->user()),
+            'message' => 'Profile updated successfully'
+        ]);
     }
 
     /**
