@@ -26,7 +26,7 @@
                 <h1 class="text-2xl font-semibold text-slate-800">
                     Admin Login
                 </h1>
-                
+
                 <p class="text-sm text-slate-500 mt-1">
                     Sign in to your dashboard
                 </p>
@@ -55,6 +55,7 @@
                         Password
                     </label>
                     <input
+                        @keydown.space.prevent
                         type="password"
                         name="password"
                         class="w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
